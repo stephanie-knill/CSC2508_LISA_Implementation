@@ -1,0 +1,10 @@
+# Folders
+papers/
+data/
+plots/
+
+
+# Miscellaneous
+.DS_Store
+.spyproject/
+__pycache__/
