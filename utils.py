@@ -13,32 +13,32 @@ def load_dataset():
     
     Returns:
         initial_dataset:        Randomly select 50% of points
-        extra_dataset:          Randomly select other 50% of points
+        (extra_dataset:          Randomly select other 50% of points -- Removed)
 
     """
     
-    if 'imis_3months' in parameters.OPTIONS['datasets']['name']:
+    try:
         df = load_imis_3months()
-    else:
+    except:
         ValueError("Invalid dataset name %s specified in parameters.py" %parameters.OPTIONS['datasets']['name'])
     
-    
+    # TODO: uncomment if wish to also implement insertion/deletion
     # Select 50% of point as initial_dataset I
-    n = len(df)
-    shuffled = df.sample(n)
-    initial_dataset = shuffled.head(math.floor(n/2))
+    # n = len(df)
+    # shuffled = df.sample(n)
+    # initial_dataset = shuffled.head(math.floor(n/2))
         
-    # Select 50% of points as extra_dataset E
-    extra_dataset = shuffled.tail(math.floor(n/2))
+    # # Select 50% of points as extra_dataset E
+    # extra_dataset = shuffled.tail(math.floor(n/2))
     
-    # Reorder dataset + reset index
-    initial_dataset = initial_dataset.sort_values(by=parameters.OPTIONS['datasets']['labels'][0]).reset_index(drop=True)
-    extra_dataset = extra_dataset.sort_values(by=parameters.OPTIONS['datasets']['labels'][0]).reset_index(drop=True)
+    # # Reorder dataset + reset index
+    # initial_dataset = initial_dataset.sort_values(by=parameters.OPTIONS['datasets']['labels'][0]).reset_index(drop=True)
+    # extra_dataset = extra_dataset.sort_values(by=parameters.OPTIONS['datasets']['labels'][0]).reset_index(drop=True)
 
-    return initial_dataset, extra_dataset
-    
-    
+    initial_dataset = df.sort_values(by=parameters.OPTIONS['datasets']['labels'][0]).reset_index(drop=True)
 
+    return initial_dataset#, extra_dataset
+    
 
 def load_imis_3months():
     """
@@ -97,8 +97,7 @@ def export_subset_imis(n):
     """
     Create a subset of the imis_3months dataset (100+ million unique points) and 
     save this locally as 'imis_3months_subsetN.txt'
-    
-    
+     
     Args:
         n:      Size of subset
     """

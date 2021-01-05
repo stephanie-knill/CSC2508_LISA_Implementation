@@ -304,10 +304,18 @@ class LISA():
             # Handle edge cases: mapped values larger or smaller than mapped partitions            
             try:
                 k_l = int(np.floor(self._shard_pred_func_xmap(x_l_map)))
+                if k_l < 0:
+                    k_l = 0
+                if k_l >=len(self.shards):
+                    k_l = len(self.shards) -1
             except:
                 k_l = 0                
             try:
                 k_u = int(np.floor(self._shard_pred_func_xmap(x_u_map)))
+                if k_u < 0:
+                    k_u = 0
+                if k_u >= len(self.shards):
+                    k_u = len(self.shards) -1
             except:
                 k_u = len(self.shards) -1
         
@@ -329,6 +337,7 @@ class LISA():
         
             # Binary search: ubound
             u = self.local_models[k_u].lbound(x_u_map)
+            
             
             # if u != -1:
             for s in range(0, u):
@@ -1234,11 +1243,25 @@ class LISA():
 
 
 
+''' ###################### Testing Range Queries ###################### '''
+def generate_qr(self, LISA_index):
+    """
+    Randomly generate a query recetangle (qr)
+    
+    Input:
+        LISA_index:   a LISA object
+    
+    Returns:
+        qr:           A query rectangle
+    """
+
+
+
 if __name__ == '__main__':    
           
     ''' ###################### Construction of Index ###################### '''
     
-    initial_dataset, extra_dataset = utils.load_dataset()  
+    initial_dataset = utils.load_dataset()  
     index = LISA(initial_dataset)
                  
     ''' ###################### Query Processing ###################### '''
@@ -1246,13 +1269,6 @@ if __name__ == '__main__':
     # 1) Range Queries 
     qr = [[20, 28], [37, 40]]
     R = index.range_query(qr)
-    
-    # Verify got R right
-    R_act = initial_dataset[initial_dataset['lon'] >= qr[0][0]]
-    R_act = R_act[R_act['lon'] <= qr[0][1]]
-    R_act = R_act[R_act['lat'] >= qr[1][0]]
-    R_act = R_act[R_act['lat'] <= qr[1][1]]
-    
     
     # 2) KNN Queries 
     
