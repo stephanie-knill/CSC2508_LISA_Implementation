@@ -1,1 +1,0 @@
-"""Evaluation Metrics1) Size:        Disk storage space that a method consumes2) IO:          Average number of pages to be loaded for a range/KNN query3) IO Ratio:    Ratio of a methodd's IO cost to R-tree's cost4) Size Ratio:  Ratio of a methodd's Size cost to R-tree's cost"""

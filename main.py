@@ -4,15 +4,15 @@ Created on Tues Dec 29 2020
 @author: stephanieKnill
 """
 
-import numpy as np
 import math
+import numpy as np
 import pandas
+import random
 import scipy
 from scipy import linalg
 
 # Modules
 import parameters
-import visualizations
 import utils
 
 
@@ -22,7 +22,6 @@ class LISA():
     
     Args:
         initial_dataset:    Keys in the initial dataset
-        page_size:          Predefined page size
         
     Attributes:
         border_points:      Pandas dataframe of border_points
@@ -1243,18 +1242,36 @@ class LISA():
 
 
 
-''' ###################### Testing Range Queries ###################### '''
-def generate_qr(self, LISA_index):
-    """
-    Randomly generate a query recetangle (qr)
-    
-    Input:
-        LISA_index:   a LISA object
-    
-    Returns:
-        qr:           A query rectangle
-    """
-
+    ''' ###################### Testing Range Queries ###################### '''
+    def generate_qr(self):
+        """
+        Randomly generate a query recetangle (qr)
+        Side length between (0, 1/4 Delta_i), where Delta_i is distance between
+        the min and max values on axis i.
+        
+        Returns:
+            qr:           A query rectangle (list of lists) [[x_0, x_0'], ..., [x_{d-1}, x_{d-1}']]
+        """
+        # Iterate along each dimension
+        qr = []
+        for i in range(len(parameters.OPTIONS['datasets']['labels'])):
+            lb = self.border_points.iloc[0][i]
+            ub = self.border_points.iloc[-1][i]
+            
+            # Side length between (0, 1/4 Delta_i)
+            length = random.random() * (ub - lb)/4
+            
+            # Get stuff now
+            safe = False
+            while not safe:
+                lower = (random.random() * (ub - lb)) + lb
+                
+                if lower + length <= ub:
+                    upper = lower + length
+                    safe = True
+            qr.append([lower, upper])
+            
+        return qr
 
 
 if __name__ == '__main__':    
@@ -1266,9 +1283,10 @@ if __name__ == '__main__':
                  
     ''' ###################### Query Processing ###################### '''
 
-    # 1) Range Queries 
-    qr = [[20, 28], [37, 40]]
-    R = index.range_query(qr)
+    # 1) Range Queries
+    for i in range(1000):
+        qr = index.generate_qr()
+        R = index.range_query(qr)
     
     # 2) KNN Queries 
     
